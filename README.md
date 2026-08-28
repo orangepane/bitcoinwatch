@@ -2,6 +2,12 @@
 
 A live Bitcoin network display that runs entirely in the browser. No backend, no trackers, no third-party scripts.
 
+![BitcoinWatch on desktop: block height, BTC price, sats per dollar, mempool, and halving countdown](img/screenshots/desktop.png)
+
+<p align="center">
+  <img src="img/screenshots/mobile.png" alt="BitcoinWatch on mobile: the same live stats in a single-column layout" width="320">
+</p>
+
 **[Open BitcoinWatch →](https://orangepane.github.io/bitcoinwatch/)** or clone it and run it yourself (see [Run](#run)).
 
 ## What it shows
