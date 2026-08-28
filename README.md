@@ -30,7 +30,7 @@ Open http://localhost:8000. Opening `index.html` directly also works, but PWA in
 
 ## Data sources
 
-- Chain: the [mempool](https://mempool.space) REST API (default `https://mempool.space/api`; change it in settings). Height, mempool, fees, hashrate, difficulty adjustment.
+- Chain: the [mempool](https://mempool.space) REST API (default `https://mempool.space/api`; change it in settings). Height, mempool, fees, hashrate, difficulty adjustment. If the configured instance fails, the feed fails over automatically to public mirrors (`mempool.emzy.de`, `mempool.bitaroo.net`) — the footer shows whichever instance last answered.
 - Price: Kraken public API, with CoinGecko and Bitfinex as fallbacks. Every request is time-boxed to 8 seconds.
 - Supply math is exact integer arithmetic on the block height: each epoch pays 50/2^epoch BTC per block, halving every 210,000 blocks. The real ledger sits a hair below the formula — a handful of historical coinbases underpaid their subsidy — but the delta is rounding noise.
 

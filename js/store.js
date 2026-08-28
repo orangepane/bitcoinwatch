@@ -74,7 +74,7 @@ window.BW = window.BW || {};
 		values: saved.values || {}, // widgetId -> last value (persisted: offline shows last-known)
 		updatedAt: saved.updatedAt || {}, // widgetId -> timestamp of last success
 		status: {
-			chain: { ok: null },
+			chain: { ok: null, host: null }, // host = instance that last answered
 			price: { ok: null, source: null },
 		},
 		pulse: 0,

@@ -42,7 +42,7 @@ window.BW = window.BW || {};
 		svg.setAttribute("stroke-width", "1.5");
 		svg.setAttribute("aria-hidden", "true");
 		paths.forEach(function (d) {
-			var p = document.createElement("path");
+			var p = document.createElementNS("http://www.w3.org/2000/svg", "path");
 			p.setAttribute("d", d);
 			p.setAttribute("stroke-linecap", "round");
 			p.setAttribute("stroke-linejoin", "round");
@@ -425,7 +425,8 @@ window.BW = window.BW || {};
 	// built as nodes, not innerHTML — the instance URL is user-supplied.
 	function renderStatus() {
 		var st = BW.store.get("status");
-		var host = BW.store.get("instanceUrl").replace(/^https?:\/\//, "");
+		// show whichever instance last answered — failover may have moved the feed
+		var host = st.chain.host || BW.store.get("instanceUrl").replace(/^https?:\/\//, "");
 
 		function part(prefix, detail, cls, ok) {
 			var frag = document.createDocumentFragment();

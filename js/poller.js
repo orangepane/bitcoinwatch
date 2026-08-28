@@ -1,7 +1,9 @@
 /* poller.js — data feeds.
    Instance: mempool REST API (default mempool.space; point settings at any instance,
-   including a self-hosted one). bitcoind itself is unreachable from a browser: its
-   RPC server sends no CORS headers and has no option to allow them.
+   including a self-hosted one) with automatic failover to public mirrors — fallbacks
+   must be mempool instances, not Esplora servers: the aggregate and /v1/* endpoints
+   are mempool-specific. bitcoind itself is unreachable from a browser: its RPC server
+   sends no CORS headers and has no option to allow them.
    Height: 10s. Mempool+fees: 30s. Price: 30s, Kraken -> CoinGecko -> Bitfinex. Mining: 60s.
    Supply, issuance, halving countdown, market cap: derived client-side from height+price. */
 window.BW = window.BW || {};
@@ -42,7 +44,13 @@ window.BW = window.BW || {};
 		},
 	];
 
-	var sticky = { price: 0 }; // keep using the last source that worked
+	var FALLBACK_INSTANCES = [
+	"https://mempool.emzy.de/api",
+	"https://mempool.bitaroo.net/api",
+];
+
+var sticky = { price: 0 }; // keep using the last source that worked
+var stickyInstance = 0; // same, for the chain feed
 	var timers = [];
 	var running = false;
 
@@ -80,9 +88,33 @@ window.BW = window.BW || {};
 			});
 	}
 
-	function api(path) {
-		var base = BW.store.get("instanceUrl").replace(/\/+$/, "");
-		return base + path;
+	/* walk instances starting from the last one that worked; the configured
+	   instance is always first in the list, self-hosted ones included */
+	function chainGet(path, asText) {
+		var own = BW.store.get("instanceUrl").replace(/\/+$/, "");
+		var bases = [own];
+		FALLBACK_INSTANCES.forEach(function (u) {
+			if (bases.indexOf(u) === -1) bases.push(u);
+		});
+		return (function attempt(step) {
+			if (step >= bases.length) {
+				return Promise.reject(new Error("all instances failed"));
+			}
+			var i = (stickyInstance + step) % bases.length;
+			var base = bases[i];
+			var p = asText ? fetchText(base + path) : fetchJSON(base + path);
+			return p.then(function (v) {
+				stickyInstance = i;
+				BW.store.setStatus("chain", {
+					ok: true,
+					host: base.replace(/^https?:\/\//, ""),
+				});
+				return v;
+			}).catch(function (err) {
+				if (step + 1 < bases.length) return attempt(step + 1);
+				throw err;
+			});
+		})(0);
 	}
 
 	/* exact by protocol rules: each epoch pays 50/2^epoch BTC per block, integer
@@ -102,7 +134,7 @@ window.BW = window.BW || {};
 	}
 
 	function pollChain() {
-		fetchText(api("/blocks/tip/height"))
+		chainGet("/blocks/tip/height", true)
 			.then(function (text) {
 				var height = parseInt(text, 10);
 				if (isNaN(height)) throw new Error("unparseable height");
@@ -123,7 +155,7 @@ window.BW = window.BW || {};
 	}
 
 	function pollPool() {
-		Promise.all([fetchJSON(api("/mempool")), fetchJSON(api("/v1/fees/recommended"))])
+		Promise.all([chainGet("/mempool"), chainGet("/v1/fees/recommended")])
 			.then(function (r) {
 				var pool = r[0];
 				var fees = r[1];
@@ -138,8 +170,8 @@ window.BW = window.BW || {};
 
 	function pollMining() {
 		Promise.all([
-			fetchJSON(api("/v1/mining/hashrate/3d")),
-			fetchJSON(api("/v1/difficulty-adjustment")),
+			chainGet("/v1/mining/hashrate/3d"),
+			chainGet("/v1/difficulty-adjustment"),
 		])
 			.then(function (r) {
 				BW.store.setValues({

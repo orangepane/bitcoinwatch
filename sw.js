@@ -2,7 +2,7 @@
    cross-origin (mempool instance, price APIs) always goes to the network. */
 "use strict";
 
-var VERSION = "bitcoinwatch-v1";
+var VERSION = "bitcoinwatch-v2";
 
 var ASSETS = [
 	"./",
