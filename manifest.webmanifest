@@ -1,0 +1,17 @@
+{
+	"name": "BitcoinWatch",
+	"short_name": "BitcoinWatch",
+	"description": "A live Bitcoin network display — no trackers, no third-party scripts.",
+	"id": "./",
+	"start_url": "./",
+	"scope": "./",
+	"display": "standalone",
+	"orientation": "any",
+	"background_color": "#0f0f11",
+	"theme_color": "#f7931a",
+	"categories": ["finance", "utilities"],
+	"icons": [
+		{ "src": "img/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+		{ "src": "img/logo-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+	]
+}
