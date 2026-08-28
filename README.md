@@ -53,6 +53,7 @@ Two browser rules to know:
 
 ## Sister projects
 
+- [BitcoinWatch](https://orangepane.github.io/bitcoinwatch/): this one. Block height, price, sats per dollar, mempool, hashrate, halving countdown.
 - [MoneroWatch](https://orangepane.github.io/monerowatch/): the same display for monero. Block height, hashrate, block reward, tx pool, XMR price.
 - [btc-ticker](https://orangepane.github.io/btc-ticker/): the same idea, simpler. A live BTC price in 6 currencies on one static page.
 
