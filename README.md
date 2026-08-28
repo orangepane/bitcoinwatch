@@ -50,4 +50,4 @@ Two browser rules to know:
 - [MoneroWatch](https://orangepane.github.io/monerowatch/): the same display for monero. Block height, hashrate, block reward, tx pool, XMR price.
 - [btc-ticker](https://orangepane.github.io/btc-ticker/): the same idea, simpler. A live BTC price in 6 currencies on one static page.
 
-Fonts are Red Hat Mono (SIL OFL 1.1). The Bitcoin logo is the public domain symbol by Bitboy; the PWA icons are generated from the official vector.
+Fonts are Red Hat Mono (SIL OFL 1.1). The Bitcoin logo is the public domain symbol by Bitboy; the PWA icons are generated from the official raster, cropped tight to the coin.
