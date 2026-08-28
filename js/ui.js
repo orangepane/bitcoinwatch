@@ -443,7 +443,7 @@ window.BW = window.BW || {};
 		footStatus.textContent = "";
 		footStatus.appendChild(part("instance ", host, "st-node", st.chain.ok));
 		footStatus.appendChild(document.createTextNode(" · "));
-		footStatus.appendChild(part("price ", st.price.source || "—", "st-src", st.price.ok));
+		footStatus.appendChild(part("price ", st.price.source || "none", "st-src", st.price.ok));
 
 		var c = st.chain.ok,
 			p = st.price.ok;
@@ -522,7 +522,7 @@ window.BW = window.BW || {};
 		var hint = document.createElement("div");
 		hint.className = "hint";
 		hint.textContent =
-			"public instances see your IP. run your own mempool and point here — applies on next poll.";
+			"public instances see your IP. run your own mempool and point here; it applies on next poll.";
 		pop.appendChild(hint);
 
 		var err = document.createElement("div");

@@ -2,7 +2,7 @@
    cross-origin (mempool instance, price APIs) always goes to the network. */
 "use strict";
 
-var VERSION = "bitcoinwatch-v2";
+var VERSION = "bitcoinwatch-v3";
 
 var ASSETS = [
 	"./",
@@ -17,7 +17,20 @@ var ASSETS = [
 	"./fonts/red-hat-mono-500.woff2",
 	"./fonts/red-hat-mono-600.woff2",
 	"./fonts/red-hat-mono-700.woff2",
-	"./img/logo.svg",
+	"./img/Bitcoin.svg",
+	"./img/icon-16.png",
+	"./img/icon-32.png",
+	"./img/icon-48.png",
+	"./img/icon-64.png",
+	"./img/icon-96.png",
+	"./img/icon-128.png",
+	"./img/icon-192.png",
+	"./img/icon-256.png",
+	"./img/icon-384.png",
+	"./img/icon-512.png",
+	"./img/apple-touch-icon.png",
+	"./img/icon-maskable-192.png",
+	"./img/icon-maskable-512.png",
 ];
 
 self.addEventListener("install", function (e) {
