@@ -277,7 +277,6 @@ window.BW = window.BW || {};
 		var id = item.id;
 		var card = document.createElement("section");
 		card.className = "card";
-		card.dataset.id = id;
 		card.setAttribute("tabindex", "-1");
 
 		var head = document.createElement("div");
@@ -491,7 +490,7 @@ window.BW = window.BW || {};
 
 	function exampleInstanceUrl() {
 		return location.protocol === "https:"
-			? "https://mempool.space/api"
+			? BW.store.DEFAULT_INSTANCE
 			: "http://192.168.1.10:4080/api";
 	}
 

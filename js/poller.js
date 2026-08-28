@@ -45,12 +45,13 @@ window.BW = window.BW || {};
 	];
 
 	var FALLBACK_INSTANCES = [
-	"https://mempool.emzy.de/api",
-	"https://mempool.bitaroo.net/api",
-];
+		"https://mempool.emzy.de/api",
+		"https://mempool.bitaroo.net/api",
+	];
 
-var sticky = { price: 0 }; // keep using the last source that worked
-var stickyInstance = 0; // same, for the chain feed
+	var sticky = { price: 0 }; // keep using the last source that worked
+	var stickyInstance = 0; // same, for the chain feed
+	var chainBusy = false; // a hung instance walk must not stack on the 10s tick
 	var timers = [];
 	var running = false;
 
@@ -118,14 +119,16 @@ var stickyInstance = 0; // same, for the chain feed
 	}
 
 	/* exact by protocol rules: each epoch pays 50/2^epoch BTC per block, integer
-	   sats. The real ledger sits a hair below this — a handful of historical
-	   coinbases underpaid their subsidy — but the delta is rounding noise. */
+	   sats. Tip-inclusive: a chain tip at height H means blocks 0..H are mined, so
+	   the loop runs while h <= height. The real ledger sits a hair below this — a
+	   handful of historical coinbases underpaid their subsidy — but the delta is
+	   rounding noise. */
 	function supplySats(height) {
 		var sats = 0;
 		var subsidy = 50 * 1e8;
 		var h = 0;
-		while (h < height) {
-			var inEpoch = Math.min(HALVING_INTERVAL, height - h);
+		while (h <= height) {
+			var inEpoch = Math.min(HALVING_INTERVAL, height - h + 1); // +1: the tip block
 			sats += inEpoch * subsidy;
 			subsidy = Math.floor(subsidy / 2);
 			h += HALVING_INTERVAL;
@@ -134,6 +137,8 @@ var stickyInstance = 0; // same, for the chain feed
 	}
 
 	function pollChain() {
+		if (chainBusy) return; // three hanging instances can take 3x8s > the 10s tick
+		chainBusy = true;
 		chainGet("/blocks/tip/height", true)
 			.then(function (text) {
 				var height = parseInt(text, 10);
@@ -151,6 +156,9 @@ var stickyInstance = 0; // same, for the chain feed
 			})
 			.catch(function () {
 				BW.store.setStatus("chain", { ok: false });
+			})
+			.finally(function () {
+				chainBusy = false;
 			});
 	}
 
@@ -228,12 +236,12 @@ var stickyInstance = 0; // same, for the chain feed
 		timers.push(setInterval(fn, ms));
 	}
 
-	BW.poller = {
-		CHAIN_MS: CHAIN_MS,
-		POOL_MS: POOL_MS,
-		PRICE_MS: PRICE_MS,
-		MINING_MS: MINING_MS,
+	// a new instance choice must be tried first, not buried behind a stale sticky
+	BW.store.subscribe("instanceUrl", function () {
+		stickyInstance = 0;
+	});
 
+	BW.poller = {
 		start: function () {
 			if (running) return;
 			running = true;

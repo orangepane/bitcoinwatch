@@ -123,10 +123,6 @@ window.BW = window.BW || {};
 			notify("values");
 		},
 
-		getUpdatedAt: function (id) {
-			return state.updatedAt[id] || 0;
-		},
-
 		setStatus: function (kind, patch) {
 			Object.assign(state.status[kind], patch);
 			notify("status");
